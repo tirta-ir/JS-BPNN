@@ -1,4 +1,4 @@
-// Import the library in your script
+// Import 'mathjs' library for this code
 const math = require('mathjs');
 
 // Define the activation function and its derivative
@@ -10,7 +10,7 @@ function dsigmoid(y) {
     return y * (1 - y);
 }
 
-// Define the Neural Network class
+// Define the NN class
 class NeuralNetwork {
     constructor(input_nodes, hidden_nodes, output_nodes) {
         this.input_nodes = input_nodes;
@@ -27,25 +27,29 @@ class NeuralNetwork {
     }
 
     feedforward(input_array) {
-        // Generating the Hidden Outputs
+        
+        // Generate the hidden outputs
         let inputs = math.matrix(input_array);
         let hidden = math.add(math.multiply(this.weights_ih, inputs), this.bias_h);
-        // Activation function!
+        
+        // Bind the activation function
         hidden = math.map(hidden, sigmoid);
 
-        // Generating the output's output!
+        // Generate the output's output
         let output = math.add(math.multiply(this.weights_ho, hidden), this.bias_o);
         output = math.map(output, sigmoid);
 
-        // Sending back to the caller!
+        // Send back to the caller
         return output.toArray();
     }
 
     train(input_array, target_array) {
-        // Generating the Hidden Outputs
+        
+        // Generate the hidden outputs
         let inputs = math.matrix(input_array);
         let hidden = math.add(math.multiply(this.weights_ih, inputs), this.bias_h);
         hidden = math.map(hidden, sigmoid);
+        
         let outputs = math.add(math.multiply(this.weights_ho, hidden), this.bias_o);
         outputs = math.map(outputs, sigmoid);
 
@@ -53,6 +57,7 @@ class NeuralNetwork {
         let targets = math.matrix(target_array);
         let output_errors = math.subtract(targets, outputs);
         let gradients = math.map(outputs, dsigmoid);
+        
         gradients = math.dotMultiply(gradients, output_errors);
         gradients = math.multiply(gradients, this.learning_rate);
 
@@ -74,11 +79,12 @@ class NeuralNetwork {
         hidden_gradient = math.dotMultiply(hidden_gradient, hidden_errors);
         hidden_gradient = math.multiply(hidden_gradient, this.learning_rate);
 
-        // Calcuate input->hidden deltas
+        // Calcuate input into hidden deltas
         let inputs_T = math.transpose(inputs);
         let weight_ih_deltas = math.multiply(hidden_gradient, inputs_T);
 
         this.weights_ih = math.add(this.weights_ih, weight_ih_deltas);
+        
         // Adjust the bias by its deltas (which is just the gradients)
         this.bias_h = math.add(this.bias_h, hidden_gradient);
     }
